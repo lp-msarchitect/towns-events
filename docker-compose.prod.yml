@@ -1,7 +1,7 @@
 version: "3.8"
 services:
  db:
-  image: lpmsarchitect/preloaded_db:0.1
+  image: lpmsarchitect/preloaded_db:0.3
   environment:
    - POSTGRES_USER=$DB_USER
    - POSTGRES_PASSWORD=$DB_PASSWORD
