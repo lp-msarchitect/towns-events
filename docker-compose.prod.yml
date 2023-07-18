@@ -1,0 +1,48 @@
+version: "3.8"
+services:
+ db:
+  image: lpmsarchitect/preloaded_db:0.1
+  environment:
+   - POSTGRES_USER=$DB_USER
+   - POSTGRES_PASSWORD=$DB_PASSWORD
+  ports:
+   - $PORT:$PORT
+  volumes:
+   - ./db/data:/var/lib/postgresql/data
+  restart: always
+  command: -p $PORT
+ server:
+  depends_on:
+   - db
+  build:
+   context: ./server
+   dockerfile: Dockerfile.prod
+  environment:
+    - NODE_ENV=$API_NODE_ENV
+    - SERVER_PORT=$SERVER_PORT
+    - DB_HOST=db
+    - PORT=$PORT
+    - DB_USER=$DB_USER
+    - DB_PASSWORD=$DB_PASSWORD
+    - DB=$DB
+    - DIALECT=$DIALECT
+  ports:
+   - $SERVER_PORT:$SERVER_PORT
+  volumes:
+   - /app/node_modules
+ ui_build:
+  build:
+   context: ./client
+   dockerfile: Dockerfile.prod
+  environment:
+   - NODE_ENV
+   - REACT_APP_API_HOST
+  volumes:
+   - ./ui/build:/app/build
+   - /app/node_modules
+ ui_server:
+  image: nginx:1.19.4-alpine
+  ports:
+   - 80:80
+  volumes:
+   - ./ui/build:/usr/share/nginx/html

@@ -1,0 +1,6 @@
+# Base image
+FROM node:19.7-alpine
+WORKDIR /app
+COPY . .
+RUN npm i --production
+CMD npm run start
